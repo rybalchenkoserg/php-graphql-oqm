@@ -60,6 +60,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     {
         $upperCamelCaseProp = StringLiteralFormatter::formatUpperCamelCase($fieldName);
         $this->addObjectSelector($fieldName, $upperCamelCaseProp, $typeName, $typeKind, $argsObjectName, $isDeprecated, $deprecationReason);
+        $this->addObjectInserter($upperCamelCaseProp, $typeName, $typeKind, $argsObjectName, $isDeprecated, $deprecationReason);
     }
 
     /**
@@ -103,6 +104,30 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
 }";
         $this->classFile->addMethod($method, $isDeprecated, $deprecationReason);
     }
+
+  /**
+   * @param string $fieldName
+   * @param string $upperCamelName
+   * @param string $fieldTypeName
+   * @param string $fieldTypeKind
+   * @param string $argsObjectName
+   * @param bool $isDeprecated
+   * @param string|null $deprecationReason
+   */
+  protected function addObjectInserter(string $upperCamelName, string $fieldTypeName, string $fieldTypeKind, string $argsObjectName, bool $isDeprecated, ?string $deprecationReason)
+  {
+    $objectClass = $fieldTypeName . ($fieldTypeKind === FieldTypeKindEnum::UNION_OBJECT ? 'UnionObject' : 'QueryObject');
+    $method = "public function insert$upperCamelName($objectClass \$object, $argsObjectName \$argsObject = null)
+{
+    if (\$argsObject !== null) {
+        \$object->appendArguments(\$argsObject->toArray());
+    }
+    \$this->selectField(\$object);
+
+    return \$object;
+}";
+    $this->classFile->addMethod($method, $isDeprecated, $deprecationReason);
+  }
 
     /**
      * This method builds the class and writes it to the file system
