@@ -21,7 +21,8 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      * @param string $objectName
      * @param string $namespace
      */
-    public function __construct(string $writeDir, string $objectName, string $namespace = self::DEFAULT_NAMESPACE)
+    public function __construct(string $writeDir, string $objectName, string $namespace = self::DEFAULT_NAMESPACE, string $fieldName = "")
+
     {
         $className = $objectName . 'QueryObject';
 
@@ -36,6 +37,8 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
         if ($objectName === QueryObject::ROOT_QUERY_OBJECT_NAME) {
             $objectName = '';
         }
+
+        $objectName = strlen($fieldName) == 0 ? $objectName : $fieldName;
         $this->classFile->addConstant('OBJECT_NAME', $objectName);
     }
 

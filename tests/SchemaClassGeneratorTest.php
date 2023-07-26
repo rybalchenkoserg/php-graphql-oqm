@@ -914,9 +914,9 @@ class TransparentSchemaClassGenerator extends SchemaClassGenerator
         return parent::generateRootQueryObject();
     }
 
-    public function generateQueryObject(string $objectName): bool
+    public function generateQueryObject(string $objectName, string $fieldName): bool
     {
-        return parent::generateQueryObject($objectName);
+        return parent::generateQueryObject($objectName, $fieldName);
     }
 
     public function generateEnumObject(string $objectName): bool
@@ -929,7 +929,7 @@ class TransparentSchemaClassGenerator extends SchemaClassGenerator
         return parent::generateInputObject($objectName);
     }
 
-    public function generateObject(string $objectName, string $objectKind): bool
+    public function generateObject(string $objectName, string $objectKind, string $fieldName = ""): bool
     {
         return parent::generateObject($objectName, $objectKind);
     }

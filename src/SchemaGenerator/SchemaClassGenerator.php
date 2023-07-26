@@ -110,7 +110,7 @@ class SchemaClassGenerator
             } else {
 
                 // Generate nested type object if it wasn't generated
-                $objectGenerated = $this->generateObject($typeName, $typeKind);
+                $objectGenerated = $this->generateObject($typeName, $typeKind, $name);
                 if ($objectGenerated) {
 
                     // Generate nested type arguments object if it wasn't generated
@@ -132,11 +132,11 @@ class SchemaClassGenerator
      *
      * @return bool
      */
-    protected function generateObject(string $objectName, string $objectKind): bool
+    protected function generateObject(string $objectName, string $objectKind, string $fieldName = ""): bool
     {
         switch ($objectKind) {
             case FieldTypeKindEnum::OBJECT:
-                return $this->generateQueryObject($objectName);
+                return $this->generateQueryObject($objectName, $fieldName);
             case FieldTypeKindEnum::INPUT_OBJECT:
                 return $this->generateInputObject($objectName);
             case FieldTypeKindEnum::ENUM_OBJECT:
@@ -154,7 +154,7 @@ class SchemaClassGenerator
      *
      * @return bool
      */
-    protected function generateQueryObject(string $objectName): bool
+    protected function generateQueryObject(string $objectName, string $fieldName): bool
     {
         if (array_key_exists($objectName, $this->generatedObjects)) {
             return true;
@@ -163,7 +163,7 @@ class SchemaClassGenerator
         $this->generatedObjects[$objectName] = true;
         $objectArray   = $this->schemaInspector->getObjectSchema($objectName);
         $objectName    = $objectArray['name'];
-        $objectBuilder = new QueryObjectClassBuilder($this->writeDir, $objectName, $this->generationNamespace);
+        $objectBuilder = new QueryObjectClassBuilder($this->writeDir, $objectName, $this->generationNamespace, $fieldName);
 
         $this->appendQueryObjectFields($objectBuilder, $objectName, $objectArray['fields']);
         $objectBuilder->build();
